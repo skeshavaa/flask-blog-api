@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(baseidr, 'db.sqlite')
+app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -17,18 +17,39 @@ ma = Marshmallow(app)
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True)
-    content = db.Column(db.String())
+    content = db.Column(db.String(100))
     author = db.Column(db.String(50))
-    avatar = db.Column(db.String())
+    avatar = db.Column(db.String(100))
 
-    def __init__(self, title,content, author, avatar):
+    def __init__(self, id, title,content, author, avatar):
+        self.id = id
         self.title = title
         self.content = content
         self.avatar = avatar
         self.author = author
 
- 
+#Blog Post Schema
+class BlogPostSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'title', 'content', 'author', 'avatar')
 
+blogpost_schema = BlogPostSchema()
+blogposts_schema = BlogPostSchema(many=True)
+
+@app.route('/post', methods=['POST'])
+def add_post():
+    id = request.json['id']
+    title = request.json['title']
+    content = request.json['content']
+    author = request.json['author']
+    avatar = request.json['avatar']
+
+    new_post = BlogPost(id, title, content, author, avatar)
+
+    db.session.add(new_post)
+    db.session.commit()
+
+    return blogpost_schema.jsonify(new_post)
 
 @app.route('/', methods=['GET'])
 
