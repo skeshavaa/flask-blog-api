@@ -48,9 +48,46 @@ def add_post():
 
     return blogpost_schema.jsonify(new_post)
 
-@app.route('/', methods=['GET'])
-def get():
-    return jsonify({'msg': 'Hello world'})
+# Query all Posts
+@app.route('/post/<id>', methods=['GET'])
+def get_posts(id):
+    post = BlogPost.query.get(id)
+    return blogpost_schema.jsonify(post)
+
+#Query one Post
+@app.route('/post', methods=['GET'])
+def get_post():
+    all_posts = BlogPost.query.all()
+    result = blogposts_schema.dumps(all_posts)
+    return jsonify(result)
+
+#Update
+@app.route('/post/<id>', methods=['PUT'])
+def update_post(id):
+    post = BlogPost.query.get(id)
+
+    title = request.json['title']
+    content = request.json['content']
+    author = request.json['author']
+    avatar = request.json['avatar']
+
+    post.title = title
+    post.content = content
+    post.author = author
+    post.avatar = avatar
+
+    db.session.commit()
+
+    return blogpost_schema.jsonify(post)
+
+#Delete one Post
+@app.route('/post/<id>', methods=['DELETE'])
+def delete_post(id):
+    post = BlogPost.query.get(id)
+    db.session.delete(post)
+    db.session.commit()
+
+    return blogpost_schema.jsonify(post)
 
 if __name__ == "__main__":
     app.run(debug=True)
