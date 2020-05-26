@@ -61,7 +61,7 @@ def get_post():
     result = blogposts_schema.dumps(all_posts)
     return jsonify(result)
 
-#Update
+#Update one Post
 @app.route('/post/<id>', methods=['PUT'])
 def update_post(id):
     post = BlogPost.query.get(id)
