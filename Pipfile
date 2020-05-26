@@ -10,6 +10,7 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 marshmallow-sqalalchemy = "*"
+marshmallow-sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"

@@ -3,11 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow 
 import os 
 
-
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -21,8 +20,7 @@ class BlogPost(db.Model):
     author = db.Column(db.String(50))
     avatar = db.Column(db.String(100))
 
-    def __init__(self, id, title,content, author, avatar):
-        self.id = id
+    def __init__(self, title,content, author, avatar):
         self.title = title
         self.content = content
         self.avatar = avatar
@@ -38,13 +36,12 @@ blogposts_schema = BlogPostSchema(many=True)
 
 @app.route('/post', methods=['POST'])
 def add_post():
-    id = request.json['id']
     title = request.json['title']
     content = request.json['content']
     author = request.json['author']
     avatar = request.json['avatar']
 
-    new_post = BlogPost(id, title, content, author, avatar)
+    new_post = BlogPost(title, content, author, avatar)
 
     db.session.add(new_post)
     db.session.commit()
@@ -52,7 +49,6 @@ def add_post():
     return blogpost_schema.jsonify(new_post)
 
 @app.route('/', methods=['GET'])
-
 def get():
     return jsonify({'msg': 'Hello world'})
 
