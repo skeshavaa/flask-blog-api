@@ -16,9 +16,9 @@ ma = Marshmallow(app)
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True)
-    content = db.Column(db.String(100))
+    content = db.Column(db.String())
     author = db.Column(db.String(50))
-    avatar = db.Column(db.String(100))
+    avatar = db.Column(db.String())
 
     def __init__(self, title,content, author, avatar):
         self.title = title
